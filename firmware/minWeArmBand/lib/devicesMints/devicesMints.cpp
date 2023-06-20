@@ -91,6 +91,22 @@ void disconnect_callback(uint16_t conn_handle, uint8_t reason)
 }
 
 
+bool initializePSA1093Mints(){
+  Serial.println("PSA1093 Initiated"); 
+  return true;
+}
+
+void readPSA1093Mints()   {
+  Serial.println("Reading PSA1093"); 
+  liveDataPacket.sensorID    = 0x3D;// PORT ID 61
+  liveDataPacket.parametorID = 0x01;// Parametor ID 01
+  liveDataPacket.sensorData  = analogRead(A0); 
+  memcpy(&sensorDataBuffer, &liveDataPacket, sizeof(liveDataPacket)); 
+  bleuart.write(sensorDataBuffer,4);
+}
+
+
+
 bool initializeMCP9808Mints(){
   
   if (!mcp9808.begin(0x18)) {
@@ -116,36 +132,21 @@ uint16_t readTempRaw() {
 }
 
 
+
 void readMCP9808Mints()   {
-  float temp = NAN;
+  Serial.println("Reading MCP9808"); 
   mcp9808.wake();
-  liveDataPacket.sensorID = 0x1B;// PORT ID 27
+  liveDataPacket.sensorID    = 0x1B;// PORT ID 27
+  liveDataPacket.parametorID = 0x01;// Parametor ID 01
   liveDataPacket.sensorData = readTempRaw();
-  // Serial.println(liveDataPacket.sensorData);
-  uint16_t t  = liveDataPacket.sensorData;
-  Serial.println("Start");
-  if (t != 0xFFFF) {
-    temp = t & 0x0FFF;
-    Serial.println(temp);
-
-    temp /= 16.0;
-    Serial.println(temp);
-    if (t & 0x1000){
-      temp -= 256;
-      Serial.println(temp);}
-  }
-
   mcp9808.shutdown_wake(1); 
-  memcpy(&sensorDataBuffer, &liveDataPacket, 3);
-  Serial.println("SensorID");  
-  Serial.println(sensorDataBuffer[0]);
-  Serial.println("First Byte");  
-  Serial.println(sensorDataBuffer[1]);
-  Serial.println("Second Byte");  
-  Serial.println(sensorDataBuffer[2]);
-  bleuart.write(sensorDataBuffer,3);
+  memcpy(&sensorDataBuffer, &liveDataPacket, sizeof(liveDataPacket)); 
+  bleuart.write(sensorDataBuffer,4);
 
-Serial.println("Finish");
+
+
+  
+
 
 }
 

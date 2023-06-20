@@ -8,7 +8,12 @@
 // #include <Wire.h>
 // #include <Adafruit_NeoPixel.h>
 // #include "Adafruit_MCP9808.h"
-uint8_t sensorDataBuffer[3];
+uint8_t sensorDataBuffer[4];
+
+
+uint16_t PSA1093Signal;
+bool PSA1093Online; 
+
 
 Adafruit_MCP9808 mcp9808 = Adafruit_MCP9808();
 bool MCP9808Online; 
@@ -39,7 +44,7 @@ int ledState = LOW;  // ledState used to set the LED
 unsigned long previousMillis = 0;  // will store last time LED was updated
 int PulseSensorPurplePin = 0;        // Pulse Sensor PURPLE WIRE connected to ANALOG PIN 0
 
-int Signal;                // holds the incoming raw data. Signal value can range from 0-1024
+uint16_t Signal;                // holds the incoming raw data. Signal value can range from 0-1024
 int Threshold = 550;    
 
 unsigned long blinkStartTime = millis();
@@ -67,6 +72,10 @@ void setup() {
   delay(initPeriod);
   MCP9808Online = initializeMCP9808Mints();
 
+  delay(initPeriod);
+  PSA1093Online = initializePSA1093Mints();
+  
+  delay(initPeriod);
   BLEOnline = initializeBLEMints();
 
 }
@@ -75,22 +84,17 @@ void setup() {
 void loop() {
     startTime  = millis();
       
-      delay(sensingPeriod);
       if(MCP9808Online)
       {
         readMCP9808Mints();
       }
- 
-       delay(sensingPeriod);
-      if(MCP9808Online)
+      
+      delay(40);
+      if(PSA1093Online)
       {
-        readMCP9808MintsTest();
+        readPSA1093Mints();
       }
-  // Signal = analogRead(A0);  // Read the PulseSensor's value. 
-  // Serial.println(Signal);  
-  // snprintf(temperature_buf, sizeof(temperature_buf) - 1, "%0.*f", 1, Signal*1.0);
-  // bleuart.write(temperature_buf);
 
-  delayMints(millis() - startTime,2000);
+  delayMints(millis() - startTime,100);
   
   }

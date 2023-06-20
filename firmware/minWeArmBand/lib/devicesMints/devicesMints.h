@@ -5,7 +5,8 @@
 #include "jobsMints.h"
 #include <bluefruit.h>
 #include "Adafruit_MCP9808.h"
-
+#include <iostream>
+#include <bitset>
 
 
 // mcp9808
@@ -17,6 +18,13 @@ extern Adafruit_MCP9808 mcp9808;
 bool initializeMCP9808Mints();
 void readMCP9808Mints();
 void readMCP9808MintsTest();
+
+
+extern uint16_t PSA1093Signal;
+bool initializePSA1093Mints();
+void readPSA1093Mints();
+
+
 //
 
 // // BLE Service
@@ -30,11 +38,12 @@ void startAdv(void);
 void disconnect_callback(uint16_t conn_handle, uint8_t reason);
 void connect_callback(uint16_t conn_handle);
 
-extern uint8_t sensorDataBuffer[3];
+extern uint8_t sensorDataBuffer[4];
 
 struct sensorPacket
 {
     uint8_t sensorID;
+    uint8_t parametorID;
     uint16_t sensorData;
     };
 
